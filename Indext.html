@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Chart UI</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+        }
+        canvas {
+            border: 1px solid #ddd;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Dynamic Live Chart</h2>
+<canvas id="myChart" width="400" height="200"></canvas>
+<button onclick="updateChart()">Update Chart</button>
+
+<script>
+    let data = [0];
+    let yAxisValue = 0;
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Live Data',
+                data: data,
+                borderColor: 'blue',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 5,
+                        beginAtZero: true
+                    }
+                }
+            }
+        }
+    });
+
+    function updateChart() {
+        const newValue = Math.random() * 10;
+        data.push(newValue);
+
+        if (data.length > 10) {
+            data.shift();
+        }
+
+        yAxisValue += 5;
+
+        chart.options.scales.y.ticks = {
+            stepSize: 5,
+            beginAtZero: true,
+            min: yAxisValue,
+            max: yAxisValue + 50
+        };
+
+        chart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
+        chart.data.datasets[0].data = data;
+
+        chart.update();
+    }
+</script>
+
+</body>
+</html>
